@@ -1,49 +1,46 @@
-export const searchStarWarsAPI = async (url) => { 
-  const response = await fetch(url || "https://swapi.co/api/")
+export const searchStarWarsAPI = async (url) => {
+  const response = await fetch(url || 'https://swapi.co/api/');
   try {
-    if(response.status >= 400) {
-      throw new Error('fetch recieved an invalid response')
+    if (response.status >= 400) {
+      throw new Error('fetch recieved an invalid response');
     } else {
       return await response.json();
     }
   }
   catch {
-    throw Error('Problem with fetch')
+    throw Error('Problem with fetch');
   }
-}
+};
 
 export const fetchPeopleData = async (url) => {
-
   const people = await searchStarWarsAPI(url);
-  const unresolvedPromises = people.results.map( async (person) => {
-    const species = await searchStarWarsAPI(person.species)
-    const planet = await searchStarWarsAPI(person.homeworld)
-    return ({species: species, properName:person.name, ...planet})
-  })
-  return Promise.all(unresolvedPromises)
-}
+  const unresolvedPromises = people.results.map(async (person) => {
+    const species = await searchStarWarsAPI(person.species);
+    const planet = await searchStarWarsAPI(person.homeworld);
+    return ({ species: species, properName: person.name, ...planet });
+  });
+  return Promise.all(unresolvedPromises);
+};
 
-export const fetchPlanetData = async url => {
+export const fetchPlanetData = async (url) => {
   const planets = await searchStarWarsAPI(url);
-  const unresolvedPromises = planets.results.map( async planet => {
-    const planetResidents = await Promise.all(planet.residents.map(async resident => {
-        return await searchStarWarsAPI(resident) 
-      }))
+  const unresolvedPromises = planets.results.map(async (planet) => {
+    const planetResidents = await Promise.all(planet.residents.map(async (resident) => {
+      return searchStarWarsAPI(resident);
+    }));
     const planetCard = {
       name: planet.name,
       population: planet.population,
       climate: planet.climate,
       terrain: planet.terrain,
-      residents: planetResidents
-      }
-    
-    return planetCard
-  })
-
+      residents: planetResidents,
+    };
+    return planetCard;
+  });
   return Promise.all(unresolvedPromises);
-}
+};
 
-export const fetchVehicleData = async url => {
+export const fetchVehicleData = async (url) => {
   const vehicles = await searchStarWarsAPI(url);
   const vehicleData = vehicles.results.map((vehicle, i) => {
     return {
@@ -53,12 +50,12 @@ export const fetchVehicleData = async url => {
       properties: [
         `Model: ${vehicle.model}`,
         `Class: ${vehicle.vehicle_class}`,
-        `# Of Passengers: ${vehicle.passengers}`
-      ]
-    } 
-  })
-  return vehicleData
-}
+        `# Of Passengers: ${vehicle.passengers}`,
+      ],
+    }; 
+  });
+  return vehicleData;
+};
 
 export const makePlanetCard = category => {
   const planetCard = category.map((item, i) => {
@@ -71,13 +68,13 @@ export const makePlanetCard = category => {
         `Population: ${item.population}`,
         `Climate: ${item.climate}`,
         `Residents: ${item.residents.map(resident => {
-          return resident.name
-        })}`
-      ]
-    }
-  })
-  return planetCard
-}
+          return resident.name;
+        })}`,
+      ],
+    };
+  });
+  return planetCard;
+};
 
 export const makePeopleCard = category => {
   const personCard = category.map((item, i) => {
@@ -88,23 +85,23 @@ export const makePeopleCard = category => {
       properties: [
         `Planet: ${item.name}`,
         `Population: ${item.population}`,
-        `Species: ${item.species.name}`
-      ]
-    }
-  })
-  return personCard
-}
+        `Species: ${item.species.name}`,
+      ],
+    };
+  });
+  return personCard;
+};
 
 export const putDataIntoStorage = (key, data) => {
   localStorage.setItem(key, JSON.stringify(data));
-}
+};
 
 export const checkLocalStorage = key => {
-  const retrievedJSON = localStorage.getItem(key)
-  if(typeof retrievedJSON === 'string') {
-    const newData = JSON.parse(retrievedJSON)
-    return newData
+  const retrievedJSON = localStorage.getItem(key);
+  if (typeof retrievedJSON === 'string') {
+    const newData = JSON.parse(retrievedJSON);
+    return newData;
   } else {
-    return null
+    return null;
   }
-}
+};

@@ -7,8 +7,10 @@ exports[`Card matches the snapshot 1`] = `
   <button
     className="favorited"
     onClick={[Function]}
+    type="button"
   >
     <img
+      alt="mil-falc"
       className="mil-falc"
       src="death-star.svg"
     />
